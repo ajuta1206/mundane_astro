@@ -13,4 +13,5 @@ wheels/
 data/
 .pytest_cache/
 *.log
+!results/*.log
 .DS_Store

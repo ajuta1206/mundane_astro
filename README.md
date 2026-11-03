@@ -47,4 +47,6 @@ CFTC positioning, sector breadth, and a direct volatility-risk-premium target wi
 Experiments: `experiments/restrict.py` (subset restrictions) and `experiments/simple_models.py` (few-input models).
 v1 and v2 results are kept in `results/model_v1_baseline/` and `results/model_v2_baseline/`.
 
+**Backtest results:** see [`RESULTS.md`](RESULTS.md) for the summary and `results/` for every output.
+
 See `METHODOLOGY.md` for the full details. Not investment advice.
