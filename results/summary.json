@@ -1,0 +1,97 @@
+{
+  "by_span": {
+    "daily": {
+      "tests": 3536,
+      "nominal_p05": 234,
+      "expected": 176.8,
+      "fdr_q10": 13,
+      "robust": 1
+    },
+    "weekly": {
+      "tests": 3296,
+      "nominal_p05": 213,
+      "expected": 164.8,
+      "fdr_q10": 0,
+      "robust": 0
+    },
+    "monthly": {
+      "tests": 4048,
+      "nominal_p05": 248,
+      "expected": 202.4,
+      "fdr_q10": 0,
+      "robust": 0
+    },
+    "quarterly": {
+      "tests": 3335,
+      "nominal_p05": 193,
+      "expected": 166.8,
+      "fdr_q10": 0,
+      "robust": 0
+    },
+    "half-yearly": {
+      "tests": 2875,
+      "nominal_p05": 142,
+      "expected": 143.8,
+      "fdr_q10": 0,
+      "robust": 0
+    },
+    "yearly": {
+      "tests": 1953,
+      "nominal_p05": 101,
+      "expected": 97.7,
+      "fdr_q10": 0,
+      "robust": 0
+    }
+  },
+  "tests": 19043,
+  "nominal_p05": 1131,
+  "expected_by_chance": 952.2,
+  "fdr_q10": 13,
+  "robust": 1,
+  "vol_fdr_q10": 100,
+  "bradley_p05_markets": 0,
+  "bradley_markets": 16,
+  "verdicts": {
+    "Too few episodes to judge": 11672,
+    "No effect": 7009,
+    "Nominal p<0.05 only (likely chance)": 361,
+    "ROBUST: survives FDR + both halves": 1
+  },
+  "options": {
+    "weekly": {
+      "tests": 8240,
+      "nominal_p05": 555,
+      "expected": 412.0,
+      "fdr_q10": 0,
+      "robust": 0
+    },
+    "monthly": {
+      "tests": 7040,
+      "nominal_p05": 458,
+      "expected": 352.0,
+      "fdr_q10": 0,
+      "robust": 0
+    },
+    "quarterly": {
+      "tests": 5800,
+      "nominal_p05": 282,
+      "expected": 290.0,
+      "fdr_q10": 0,
+      "robust": 0
+    },
+    "half-yearly": {
+      "tests": 5000,
+      "nominal_p05": 156,
+      "expected": 250.0,
+      "fdr_q10": 0,
+      "robust": 0
+    },
+    "yearly": {
+      "tests": 2232,
+      "nominal_p05": 54,
+      "expected": 111.6,
+      "fdr_q10": 0,
+      "robust": 0
+    }
+  }
+}

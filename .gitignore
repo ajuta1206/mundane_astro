@@ -1,0 +1,16 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Downloaded market data and caches (re-downloaded automatically on first run)
+data/
+.pytest_cache/
+*.log
+.DS_Store
