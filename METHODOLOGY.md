@@ -3,7 +3,7 @@
 The question is whether classic **mundane / financial astrology** factors line up with market returns
 or volatility more often than chance would allow.
 
-### Factors: 221 astrological on/off factors plus 49 continuous cycle features
+### Factors: 235 astrological on/off factors plus 53 continuous cycle features
 
 Every input is astrological. There are no sunspot, macro or price-derived factors. The ML tab shows a
 non-astrological "naive baseline" model only as a yardstick. It is never mixed into the astrological model.
@@ -37,6 +37,12 @@ non-astrological "naive baseline" model only as a yardstick. It is never mixed i
 | Yogas | **Guru-Chandal** (Jupiter + Rahu), Jupiter + Ketu, Shani-Rahu, Shani-Ketu, **Angarak** (Mars + Rahu), Mars + Ketu, Saturn + Mars, **Kaal Sarp**, Jupiter–Saturn samasaptaka, Jupiter's 5/7/9 drishti on Rahu, Saturn's 3/7/10 drishti on Jupiter |
 | Panchang | Moon nakshatra by Vimshottari lord (9 groups); Rikta and Purna tithis |
 | Element placements | Sidereal Jupiter / Saturn / Rahu by element |
+| Jupiter–Ketu layer | Jupiter–Ketu within 10° (ignores sign lines); exalted Jupiter with Ketu in Karka; Saturn conjunct or 3/7/10 drishti on Rahu or Ketu; Jupiter with Ketu **while** Saturn is on the nodes; Jupiter's 5/7/9 drishti on Saturn; Jupiter / Saturn in own sign; continuous Jupiter–Ketu separation |
+| USA chart houses (Vedic) | Whole-sign houses from the Sibly chart's sidereal lagna (Vrischika ~21.6°), grouped to limit test count: Jupiter in kendra/trikona; Saturn in kendra; Saturn in dusthana (6/8/12); Rahu in dusthana; Rahu–Ketu on the 2nd/8th axis |
+| Traditional composite | Stress vs support score with **fixed a-priori weights** (`VEDIC_STRESS_WEIGHTS`, `VEDIC_SUPPORT_WEIGHTS` in `factors_ext.py`), never fitted to market data; on/off as "net negative" and "stress ≥ 3", plus continuous stress / support / net |
+
+Nodes are mean nodes. True-node panchangs can put Rahu/Ketu sign changes a week or so earlier
+or later (e.g. Ketu enters Karka ~26 Nov 2026 by true node, 5 Dec 2026 by mean node).
 
 **Continuous (ML only).** Sin/cos of the synodic angle for each outer-planet pair, plus Sun–Moon, Mars–Jupiter,
 Mars–Saturn and Venus–Jupiter. Also sidereal Rahu/Ketu/Jupiter/Saturn longitude, planetary declinations,

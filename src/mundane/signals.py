@@ -223,6 +223,21 @@ VEDIC_LABELS = {
     "jupiter_ingress_window": "Jupiter rashi change (+/-10d)",
     "tithi_rikta": "Rikta tithi (4th/9th/14th)",
     "tithi_purna": "Purna tithi (5th/10th/15th)",
+    "jupiter_with_ketu": "Jupiter with Ketu (same rashi)",
+    "jupiter_ketu_within_10": "Jupiter-Ketu conjunction within 10 deg",
+    "jupiter_exalted_with_ketu": "Exalted Jupiter with Ketu in Karka (Cancer)",
+    "saturn_aspects_nodes": "Saturn conjunct/aspects (3/7/10) Rahu or Ketu",
+    "jupiter_aspects_saturn": "Jupiter aspects (5/7/9) Saturn",
+    "jupiter_ketu_with_saturn_on_nodes": "Jupiter with Ketu while Saturn aspects the nodes",
+    "jupiter_own_sid": "Jupiter in own sign (Dhanu/Meena)",
+    "saturn_own_sid": "Saturn in own sign (Makara/Kumbha)",
+    "usa_sid_jupiter_kendra_trikona": "USA chart (Vedic): Jupiter in kendra/trikona house",
+    "usa_sid_saturn_kendra": "USA chart (Vedic): Saturn in kendra house",
+    "usa_sid_saturn_dusthana": "USA chart (Vedic): Saturn in dusthana (6/8/12)",
+    "usa_sid_rahu_dusthana": "USA chart (Vedic): Rahu in dusthana (6/8/12)",
+    "usa_sid_rahu_2_8_axis": "USA chart (Vedic): Rahu-Ketu on 2nd/8th axis",
+    "vedic_net_negative": "Vedic composite: stress outweighs support (fixed weights)",
+    "vedic_stress_high": "Vedic composite: stress score >= 3 (fixed weights)",
 }
 _RASHI = ("mesha", "vrishabha", "mithuna", "karka", "simha", "kanya", "tula", "vrischika",
           "dhanu", "makara", "kumbha", "meena")
@@ -230,7 +245,7 @@ _OPP = dict(zip(_RASHI, _RASHI[6:] + _RASHI[:6]))
 
 
 def is_vedic(name: str) -> bool:
-    return (name in VEDIC_LABELS or name.startswith(("sid_", "moon_nakshatra", "rahu_in_"))
+    return (name in VEDIC_LABELS or name.startswith(("sid_", "moon_nakshatra", "rahu_in_", "usa_sid_", "vedic_"))
             or any(name.endswith("_in_" + r) for r in _RASHI) or "ketu" in name
             or name.startswith(("jupiter_transit_moon", "jupiter_exalted_sid", "jupiter_debilitated_sid",
                                 "saturn_exalted_sid", "jupiter_aspects_rahu", "saturn_aspects_jupiter",
