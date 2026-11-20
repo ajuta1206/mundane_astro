@@ -15,6 +15,25 @@ def test_great_conjunction_2020():
     assert 300 < p["jupiter"][0] < 301  # ~0.5 deg Aquarius
 
 
+def test_jupiter_ketu_layer_2026_2027():
+    from mundane.ephemeris import daily_ephemeris
+    from mundane.factors_ext import USA_ASC_RASHI, jupiter_ketu_layer, vedic_factors
+    sid = daily_ephemeris("2026-11-20", "2027-07-31", sidereal=True)
+    elong = np.zeros(len(sid))
+    v = vedic_factors(sid, elong)
+    v["sid_saturn_debilitated"] = (sid["saturn_lon"].values // 30) == 0
+    f, x = jupiter_ketu_layer(sid, v)
+    at = lambda k, d: bool(pd.Series(f[k], index=sid.index)[d])
+    assert USA_ASC_RASHI == 7                                     # Vrischika lagna
+    assert at("jupiter_ketu_within_10", "2026-11-20")              # ~1 deg apart in Simha (Leo)
+    assert not at("jupiter_exalted_with_ketu", "2026-11-20")
+    assert not v["jupiter_with_ketu"][sid.index.get_loc("2026-12-20")]  # Ketu in Karka, Jupiter still in Simha
+    assert at("jupiter_exalted_with_ketu", "2027-04-19")           # exact conjunction in Karka
+    assert not at("jupiter_ketu_with_saturn_on_nodes", "2027-04-19")    # Saturn in Meena: no drishti on nodes
+    assert at("jupiter_ketu_with_saturn_on_nodes", "2027-06-10")   # Saturn in Mesha aspects Rahu (10th)
+    assert pd.Series(x["x_jupiter_ketu_sep"], index=sid.index)["2027-04-19"] < 0.5
+
+
 def test_total_solar_eclipse_2024_04_08():
     e = eclipses("2024-04-01", "2024-04-30")
     row = e[e.kind == "solar"].iloc[0]

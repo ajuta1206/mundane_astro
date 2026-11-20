@@ -1,6 +1,6 @@
 # Mundane — astrology × markets backtester
 
-This app computes 221 astrological factors (Western and Vedic: Rahu/Ketu, Jupiter and Saturn transits, yogas,
+This app computes 235 astrological factors (Western and Vedic: Rahu/Ketu, Jupiter and Saturn transits, yogas,
 national-chart transits, Bradley) from the Swiss Ephemeris for every day since 1870. Its **core model**
 forecasts direction and volatility for **weekly, monthly, quarterly, half-yearly and yearly** horizons. It does
 this for US and global indices, gold and oil, then turns each forecast into an **options strategy** that is

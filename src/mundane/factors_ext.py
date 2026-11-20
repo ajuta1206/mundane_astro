@@ -168,6 +168,65 @@ def vedic_factors(sid: pd.DataFrame, elong: np.ndarray) -> dict[str, np.ndarray]
     return out
 
 
+def _sid_asc_rashi(y, m, d, ut, lat, lon) -> int:
+    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    _, ascmc = swe.houses_ex(swe.julday(y, m, d, ut), lat, lon, b"W", swe.FLG_SIDEREAL)
+    return int((ascmc[0] % 360) // 30)
+
+
+# USA Sibly sidereal lagna (Lahiri): Vrischika (Scorpio) ~21.6 deg
+USA_ASC_RASHI = _sid_asc_rashi(**{k: NATAL["usa"][k] for k in ("y", "m", "d", "ut", "lat", "lon")})
+
+# Fixed a-priori weights for the traditional composite (NOT fitted to market data).
+VEDIC_STRESS_WEIGHTS = {"jupiter_with_ketu": 2, "guru_chandal_yoga": 2, "saturn_with_rahu": 2,
+                        "saturn_with_ketu": 1.5, "saturn_aspects_jupiter": 1, "sade_sati_usa": 1,
+                        "usa_sid_saturn_dusthana": 1, "usa_sid_rahu_2_8_axis": 1,
+                        "jupiter_debilitated_sid": 1, "sid_saturn_debilitated": 1}
+VEDIC_SUPPORT_WEIGHTS = {"jupiter_exalted_sid": 2, "jupiter_own_sid": 1, "usa_sid_jupiter_kendra_trikona": 1,
+                         "jupiter_aspects_saturn": 1, "saturn_exalted_sid": 1, "saturn_own_sid": 0.5}
+
+
+def jupiter_ketu_layer(sid: pd.DataFrame, vedic: dict[str, np.ndarray]
+                       ) -> tuple[dict[str, np.ndarray], dict[str, np.ndarray]]:
+    """Jupiter-Ketu conjunction in combination with the Rahu-Ketu axis and Saturn, whole-sign
+    house transits of the USA Sibly chart, and a pre-specified weighted composite.
+    Returns (boolean factors, continuous x_ features)."""
+    rahu = sid["node_lon"].values % 360
+    ketu = (rahu + 180) % 360
+    jup, sat = sid["jupiter_lon"].values % 360, sid["saturn_lon"].values % 360
+    rs, ks, js, ss = sign_of(rahu), sign_of(ketu), sign_of(jup), sign_of(sat)
+    out: dict[str, np.ndarray] = {}
+
+    jk_sep = np.abs(angle_diff(jup, ketu))
+    out["jupiter_ketu_within_10"] = jk_sep <= 10                   # tight conjunction, ignores sign lines
+    out["jupiter_exalted_with_ketu"] = (js == ks) & (js == 3)      # Guru uchcha + Ketu in Karka
+    # Saturn drishti (3rd/7th/10th) or conjunction on either node
+    sat_on_nodes = np.isin((rs - ss) % 12, [0, 2, 6, 9]) | np.isin((ks - ss) % 12, [0, 2, 6, 9])
+    out["saturn_aspects_nodes"] = sat_on_nodes
+    out["jupiter_aspects_saturn"] = np.isin((ss - js) % 12, [4, 6, 8])
+    out["jupiter_ketu_with_saturn_on_nodes"] = (js == ks) & sat_on_nodes
+    out["jupiter_own_sid"] = np.isin(js, [8, 11])
+    out["saturn_own_sid"] = np.isin(ss, [9, 10])
+
+    # Whole-sign houses (1..12) from the USA Sibly sidereal lagna
+    house = {p: (s - USA_ASC_RASHI) % 12 + 1 for p, s in (("jupiter", js), ("saturn", ss), ("rahu", rs))}
+    out["usa_sid_jupiter_kendra_trikona"] = np.isin(house["jupiter"], [1, 4, 5, 7, 9, 10])
+    out["usa_sid_saturn_kendra"] = np.isin(house["saturn"], [1, 4, 7, 10])
+    out["usa_sid_saturn_dusthana"] = np.isin(house["saturn"], [6, 8, 12])
+    out["usa_sid_rahu_dusthana"] = np.isin(house["rahu"], [6, 8, 12])
+    out["usa_sid_rahu_2_8_axis"] = np.isin(house["rahu"], [2, 8])   # wealth / sudden-loss axis
+
+    allf = {**vedic, **out}
+    stress = sum(w * allf[k].astype(float) for k, w in VEDIC_STRESS_WEIGHTS.items())
+    support = sum(w * allf[k].astype(float) for k, w in VEDIC_SUPPORT_WEIGHTS.items())
+    net = support - stress
+    out["vedic_net_negative"] = net < 0
+    out["vedic_stress_high"] = stress >= 3
+    cont = {"x_vedic_stress": stress, "x_vedic_support": support, "x_vedic_net": net,
+            "x_jupiter_ketu_sep": jk_sep}
+    return out, cont
+
+
 def extend(sig: pd.DataFrame, eph: pd.DataFrame, start, end) -> pd.DataFrame:
     idx = sig.index
     new = {}
@@ -258,7 +317,12 @@ def extend(sig: pd.DataFrame, eph: pd.DataFrame, start, end) -> pd.DataFrame:
     new["sid_saturn_debilitated"] = sign_of(sid["saturn_lon"]) == 0
 
     # --- Vedic / Jyotish layer (sidereal Lahiri): Rahu, Ketu, Jupiter, Saturn transits & yogas
-    new.update(vedic_factors(sid, sig["lunar_phase_deg"].values))
+    vedic = vedic_factors(sid, sig["lunar_phase_deg"].values)
+    new.update(vedic)
+    jk, jk_cont = jupiter_ketu_layer(sid, {**vedic, "sid_saturn_debilitated": new["sid_saturn_debilitated"]})
+    new.update(jk)
+    for k, v in jk_cont.items():
+        sig[k] = v
     for k in ("rahu", "ketu", "jupiter", "saturn"):
         lon = sid["node_lon"] if k == "rahu" else (sid["node_lon"] + 180) % 360 if k == "ketu" else sid[f"{k}_lon"]
         a = np.deg2rad(lon)
